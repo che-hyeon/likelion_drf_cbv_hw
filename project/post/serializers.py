@@ -12,6 +12,11 @@ class PostSerializer(serializers.ModelSerializer):
         serializer = CommentSerializer(instance.comments, many=True)
         return serializer.data
     
+    tag = serializers.SerializerMethodField()
+    def get_tag(self, instance):
+        tags = instance.tag.all()
+        return [tag.name for tag in tags]
+    
     like = serializers.SerializerMethodField(read_only=True)
     def get_like(self, instance):
         likes = instance.like.all()
@@ -44,3 +49,8 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
         read_only_fields = ['post', 'writer']
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = '__all__'
