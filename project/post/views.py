@@ -74,10 +74,14 @@ class CommentViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
+    def get_permissions(self):
+        if self.action in ["update", "destroy", "partial_update"]:
+            return [IsOwnerOrReadOnly()]
+        return [IsAuthenticatedOrReadOnly()]
+
 class PostCommentViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def list(self, request, post_id=None):
         post = get_object_or_404(Post, id=post_id)
